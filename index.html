@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>智慧報修系統</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --card: #1c2030;
+    --border: #252a3a;
+    --accent: #4f8ef7;
+    --accent2: #7c5cfc;
+    --success: #22d3a5;
+    --warn: #f59e0b;
+    --danger: #f43f5e;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --mono: 'Space Mono', monospace;
+    --sans: 'Noto Sans TC', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 64px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,142,247,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,142,247,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .header-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-size: clamp(24px, 5vw, 38px);
+    font-weight: 700;
+    background: linear-gradient(135deg, #e2e8f0 30%, #4f8ef7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  .main-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  @media (max-width: 640px) {
+    .main-layout { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(79,142,247,0.5), transparent);
+  }
+
+  .card-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  .voice-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .mic-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: rgba(79,142,247,0.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+  }
+
+  .mic-btn:hover {
+    background: rgba(79,142,247,0.2);
+    transform: scale(1.05);
+  }
+
+  .mic-btn.recording {
+    border-color: var(--danger);
+    background: rgba(244,63,94,0.15);
+    animation: pulse 1.2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(244,63,94,0.4); }
+    50% { box-shadow: 0 0 0 16px rgba(244,63,94,0); }
+  }
+
+  .mic-icon { font-size: 28px; }
+
+  .voice-status {
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .voice-status.active { color: var(--danger); }
+
+  .transcript-box {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 80px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    resize: vertical;
+    outline: none;
+    font-family: var(--sans);
+    transition: border-color 0.2s;
+  }
+
+  .transcript-box:focus { border-color: var(--accent); }
+  .transcript-box::placeholder { color: var(--muted); font-style: italic; }
+
+  .analyze-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .analyze-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .fields-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .field-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: border-color 0.4s, background 0.4s;
+  }
+
+  .field-item.filled {
+    border-color: rgba(34,211,165,0.4);
+    background: rgba(34,211,165,0.04);
+  }
+
+  .field-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .field-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    min-height: 24px;
+    transition: color 0.3s;
+  }
+
+  .field-item.filled .field-value { color: var(--success); }
+
+  .urgency-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .urgency-高 { background: rgba(244,63,94,0.2); color: var(--danger); }
+  .urgency-中 { background: rgba(245,158,11,0.2); color: var(--warn); }
+  .urgency-低 { background: rgba(34,211,165,0.2); color: var(--success); }
+
+  .loading-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: bounce 1s infinite;
+  }
+  .loading-dot:nth-child(2) { animation-delay: 0.15s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  .status-bar {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    flex-shrink: 0;
+  }
+  .status-dot.ok { background: var(--success); }
+  .status-dot.error { background: var(--danger); }
+  .status-dot.loading { background: var(--accent); animation: blink 1s infinite; }
+
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .example-btn {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--sans);
+    text-align: left;
+    width: 100%;
+  }
+  .example-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .examples-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .section-divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+    margin-top: 16px;
+  }
+  .btn-primary:hover { background: #3a7ae8; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">AI-Powered</div>
+  <h1>智慧報修系統</h1>
+  <p class="subtitle">語音輸入 → 自動辨識欄位 → 一鍵送出</p>
+</header>
+
+<div class="main-layout">
+
+  <!-- Voice Input -->
+  <div class="card">
+    <div class="card-title">語音輸入</div>
+    <div class="voice-center">
+      <div class="mic-btn" id="micBtn" onclick="toggleRecording()">
+        <span class="mic-icon">🎙️</span>
+      </div>
+      <div class="voice-status" id="voiceStatus">點擊開始錄音</div>
+
+      <div class="section-divider"></div>
+
+      <div style="width:100%; font-size:12px; color:var(--muted); margin-bottom:4px;">或點擊範例快速測試：</div>
+      <div class="examples-row">
+        <button class="example-btn" onclick="useExample('三樓男廁所的水龍頭壞掉一直在漏水，很緊急')">💧 三樓男廁水龍頭漏水（緊急）</button>
+        <button class="example-btn" onclick="useExample('B1停車場的電燈不亮，換了燈泡也沒用，需要電工來檢查')">💡 B1停車場電燈故障</button>
+        <button class="example-btn" onclick="useExample('二樓會議室冷氣出風口有異味，吹出來的風很臭，請派人來修')">❄️ 二樓會議室冷氣異味</button>
+        <button class="example-btn" onclick="useExample('大廳電梯按鈕卡住按不下去，很多人都在等，非常緊急')">🛗 大廳電梯按鈕卡住（緊急）</button>
+      </div>
+    </div>
+
+    <div class="section-divider" style="margin: 16px 0;"></div>
+
+    <div class="card-title">語音識別 / 手動輸入</div>
+    <textarea class="transcript-box" id="transcriptBox" placeholder="語音內容將顯示於此，也可直接手動輸入報修描述..."></textarea>
+
+    <div style="margin-top: 14px;">
+      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+        ✨ AI 分析並填入欄位
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Fields -->
+  <div class="card">
+    <div class="card-title">報修表單（自動填入）</div>
+    <div class="fields-grid">
+      <div class="field-item" id="field-floor">
+        <div class="field-label">📍 樓層</div>
+        <div class="field-value" id="val-floor">—</div>
+      </div>
+      <div class="field-item" id="field-area">
+        <div class="field-label">🗺️ 區域</div>
+        <div class="field-value" id="val-area">—</div>
+      </div>
+      <div class="field-item" id="field-category">
+        <div class="field-label">🔧 維修類別</div>
+        <div class="field-value" id="val-category">—</div>
+      </div>
+      <div class="field-item" id="field-description">
+        <div class="field-label">📝 問題描述</div>
+        <div class="field-value" id="val-description">—</div>
+      </div>
+      <div class="field-item" id="field-urgency">
+        <div class="field-label">⚡ 緊急程度</div>
+        <div class="field-value" id="val-urgency">—</div>
+      </div>
+      <div class="field-item" id="field-contact">
+        <div class="field-label">📞 建議聯絡部門</div>
+        <div class="field-value" id="val-contact">—</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="submitBtn" disabled onclick="submitForm()">
+      📤 送出報修單
+    </button>
+  </div>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">等待操作... 可直接點範例或錄音測試</span>
+  </div>
+
+</div>
+
+<script>
+let recognition = null;
+let isRecording = false;
+
+function setStatus(type, msg) {
+  document.getElementById('statusDot').className = 'status-dot ' + type;
+  document.getElementById('statusText').textContent = msg;
+}
+
+function useExample(text) {
+  document.getElementById('transcriptBox').value = text;
+  setStatus('ok', '已載入範例，點擊「AI 分析並填入欄位」');
+}
+
+function toggleRecording() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    setStatus('error', '請使用 Chrome 瀏覽器以支援語音輸入');
+    return;
+  }
+
+  if (isRecording) { recognition.stop(); return; }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'zh-TW';
+  recognition.continuous = false;
+  recognition.interimResults = true;
+
+  recognition.onstart = () => {
+    isRecording = true;
+    document.getElementById('micBtn').classList.add('recording');
+    document.getElementById('voiceStatus').textContent = '錄音中... 請說話';
+    document.getElementById('voiceStatus').classList.add('active');
+    setStatus('loading', '正在聆聽...');
+  };
+
+  recognition.onresult = (e) => {
+    let final = '', interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    document.getElementById('transcriptBox').value = final || interim;
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    document.getElementById('micBtn').classList.remove('recording');
+    document.getElementById('voiceStatus').textContent = '點擊開始錄音';
+    document.getElementById('voiceStatus').classList.remove('active');
+    const val = document.getElementById('transcriptBox').value;
+    setStatus(val ? 'ok' : '', val ? '語音識別完成，可點擊分析' : '未偵測到語音，請重試');
+  };
+
+  recognition.onerror = (e) => {
+    isRecording = false;
+    document.getElementById('micBtn').classList.remove('recording');
+    document.getElementById('voiceStatus').textContent = '點擊開始錄音';
+    document.getElementById('voiceStatus').classList.remove('active');
+    setStatus('error', '語音錯誤：' + e.error);
+  };
+
+  recognition.start();
+}
+
+async function analyze() {
+  const transcript = document.getElementById('transcriptBox').value.trim();
+  if (!transcript) {
+    setStatus('error', '請先錄音、選擇範例，或手動輸入報修描述');
+    return;
+  }
+
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>';
+  setStatus('loading', 'AI 正在分析中...');
+
+  // Clear fields
+  ['floor','area','category','description','urgency','contact'].forEach(f => {
+    document.getElementById('field-' + f).classList.remove('filled');
+    document.getElementById('val-' + f).textContent = '—';
+  });
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        system: '你是報修系統AI助手，只回傳純JSON，不加任何說明或markdown符號。',
+        messages: [{
+          role: 'user',
+          content: `從以下報修描述中抽取欄位，回傳純JSON：
+
+描述：「${transcript}」
+
+格式：
+{
+  "floor": "樓層（如1F、2F、B1、大廳，不明確填不明）",
+  "area": "具體區域（男廁、會議室、停車場等）",
+  "category": "維修類別（水電、空調、電梯、結構、清潔、其他）",
+  "description": "問題簡述（15字以內）",
+  "urgency": "緊急程度（高、中、低）",
+  "contact": "建議聯絡（水電工程、空調技師、電梯維保、物業管理）"
+}`
+        }]
+      })
+    });
+
+    const data = await res.json();
+    let raw = data.content?.[0]?.text || '';
+    raw = raw.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(raw);
+
+    const fieldMap = { floor: result.floor, area: result.area, category: result.category, description: result.description, urgency: result.urgency, contact: result.contact };
+
+    let delay = 0;
+    for (const [key, value] of Object.entries(fieldMap)) {
+      setTimeout(() => {
+        if (value && value !== '不明') {
+          document.getElementById('field-' + key).classList.add('filled');
+          if (key === 'urgency') {
+            document.getElementById('val-' + key).innerHTML = `<span class="urgency-badge urgency-${value}">${value}</span>`;
+          } else {
+            document.getElementById('val-' + key).textContent = value;
+          }
+        }
+      }, delay);
+      delay += 150;
+    }
+
+    setTimeout(() => {
+      setStatus('ok', '✅ 分析完成！請確認欄位後送出');
+      document.getElementById('submitBtn').disabled = false;
+    }, delay);
+
+  } catch (err) {
+    setStatus('error', '分析失敗：' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '✨ AI 分析並填入欄位';
+  }
+}
+
+function submitForm() {
+  const id = 'WO-' + Date.now().toString().slice(-6);
+  setStatus('ok', `🎉 報修單已送出！工單編號：${id}`);
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('submitBtn').textContent = '✅ 已送出';
+}
+</script>
+</body>
+</html>
