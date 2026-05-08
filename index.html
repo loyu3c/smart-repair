@@ -48,7 +48,7 @@
 
   header {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
 
   .header-tag {
@@ -105,20 +105,70 @@
     background: linear-gradient(90deg, transparent, rgba(79,142,247,0.5), transparent);
   }
 
+  .full-width { grid-column: 1 / -1; }
+
   .card-title {
     font-family: var(--mono);
     font-size: 11px;
     letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--muted);
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
+  /* API Key */
+  .api-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  input[type="password"], input[type="text"] {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input:focus { border-color: var(--accent); }
+
+  .btn-save {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-save:hover { background: #3a7ae8; }
+
+  .api-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 8px;
+  }
+
+  .api-hint a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  /* Voice */
   .voice-center {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
   }
 
   .mic-btn {
@@ -134,10 +184,7 @@
     transition: all 0.3s;
   }
 
-  .mic-btn:hover {
-    background: rgba(79,142,247,0.2);
-    transform: scale(1.05);
-  }
+  .mic-btn:hover { background: rgba(79,142,247,0.2); transform: scale(1.05); }
 
   .mic-btn.recording {
     border-color: var(--danger);
@@ -152,12 +199,27 @@
 
   .mic-icon { font-size: 28px; }
 
-  .voice-status {
-    font-size: 13px;
-    color: var(--muted);
-    text-align: center;
-  }
+  .voice-status { font-size: 13px; color: var(--muted); text-align: center; }
   .voice-status.active { color: var(--danger); }
+
+  .divider { width: 100%; height: 1px; background: var(--border); margin: 8px 0; }
+
+  .examples-row { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+
+  .example-btn {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--sans);
+    text-align: left;
+    width: 100%;
+  }
+  .example-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   .transcript-box {
     width: 100%;
@@ -173,8 +235,8 @@
     outline: none;
     font-family: var(--sans);
     transition: border-color 0.2s;
+    margin-top: 4px;
   }
-
   .transcript-box:focus { border-color: var(--accent); }
   .transcript-box::placeholder { color: var(--muted); font-style: italic; }
 
@@ -190,16 +252,13 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    margin-top: 14px;
   }
-
   .analyze-btn:hover { opacity: 0.9; transform: translateY(-1px); }
   .analyze-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-  .fields-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+  /* Fields */
+  .fields-grid { display: flex; flex-direction: column; gap: 12px; }
 
   .field-item {
     background: var(--surface);
@@ -244,22 +303,24 @@
   .urgency-中 { background: rgba(245,158,11,0.2); color: var(--warn); }
   .urgency-低 { background: rgba(34,211,165,0.2); color: var(--success); }
 
-  .loading-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    background: #fff;
-    border-radius: 50%;
-    margin: 0 2px;
-    animation: bounce 1s infinite;
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    background: var(--success);
+    color: #0d0f14;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 16px;
   }
-  .loading-dot:nth-child(2) { animation-delay: 0.15s; }
-  .loading-dot:nth-child(3) { animation-delay: 0.3s; }
+  .submit-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; background: var(--muted); color: var(--bg); }
 
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); opacity: 0.4; }
-    50% { transform: translateY(-5px); opacity: 1; }
-  }
-
+  /* Status */
   .status-bar {
     grid-column: 1 / -1;
     background: var(--surface);
@@ -287,51 +348,21 @@
 
   @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
-  .example-btn {
-    background: none;
-    border: 1px dashed var(--border);
-    color: var(--muted);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-size: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-family: var(--sans);
-    text-align: left;
-    width: 100%;
+  .loading-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: bounce 1s infinite;
   }
-  .example-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .loading-dot:nth-child(2) { animation-delay: 0.15s; }
+  .loading-dot:nth-child(3) { animation-delay: 0.3s; }
 
-  .examples-row {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    width: 100%;
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50% { transform: translateY(-5px); opacity: 1; }
   }
-
-  .section-divider {
-    width: 100%;
-    height: 1px;
-    background: var(--border);
-    margin: 4px 0;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-    margin-top: 16px;
-  }
-  .btn-primary:hover { background: #3a7ae8; }
-  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 </style>
 </head>
 <body>
@@ -344,18 +375,31 @@
 
 <div class="main-layout">
 
+  <!-- API Key -->
+  <div class="card full-width">
+    <div class="card-title">🔑 Gemini API Key</div>
+    <div class="api-row">
+      <input type="password" id="apiKey" placeholder="貼上你的 Gemini API Key（AIza...）" />
+      <button class="btn-save" onclick="saveKey()">儲存</button>
+    </div>
+    <div class="api-hint">
+      Key 僅儲存於瀏覽器記憶體，不會上傳任何伺服器。
+      還沒有 Key？<a href="https://aistudio.google.com/app/apikey" target="_blank">點此免費申請</a>
+    </div>
+  </div>
+
   <!-- Voice Input -->
   <div class="card">
-    <div class="card-title">語音輸入</div>
+    <div class="card-title">🎙️ 語音輸入</div>
     <div class="voice-center">
       <div class="mic-btn" id="micBtn" onclick="toggleRecording()">
         <span class="mic-icon">🎙️</span>
       </div>
       <div class="voice-status" id="voiceStatus">點擊開始錄音</div>
 
-      <div class="section-divider"></div>
+      <div class="divider"></div>
 
-      <div style="width:100%; font-size:12px; color:var(--muted); margin-bottom:4px;">或點擊範例快速測試：</div>
+      <div style="width:100%; font-size:12px; color:var(--muted); margin-bottom:2px;">或點擊範例快速測試：</div>
       <div class="examples-row">
         <button class="example-btn" onclick="useExample('三樓男廁所的水龍頭壞掉一直在漏水，很緊急')">💧 三樓男廁水龍頭漏水（緊急）</button>
         <button class="example-btn" onclick="useExample('B1停車場的電燈不亮，換了燈泡也沒用，需要電工來檢查')">💡 B1停車場電燈故障</button>
@@ -364,21 +408,19 @@
       </div>
     </div>
 
-    <div class="section-divider" style="margin: 16px 0;"></div>
+    <div class="divider" style="margin: 16px 0;"></div>
 
-    <div class="card-title">語音識別 / 手動輸入</div>
-    <textarea class="transcript-box" id="transcriptBox" placeholder="語音內容將顯示於此，也可直接手動輸入報修描述..."></textarea>
+    <div class="card-title">📝 語音識別 / 手動輸入</div>
+    <textarea class="transcript-box" id="transcriptBox" placeholder="語音內容顯示於此，也可直接手動輸入報修描述..."></textarea>
 
-    <div style="margin-top: 14px;">
-      <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
-        ✨ AI 分析並填入欄位
-      </button>
-    </div>
+    <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+      ✨ AI 分析並填入欄位
+    </button>
   </div>
 
   <!-- Form Fields -->
   <div class="card">
-    <div class="card-title">報修表單（自動填入）</div>
+    <div class="card-title">📋 報修表單（自動填入）</div>
     <div class="fields-grid">
       <div class="field-item" id="field-floor">
         <div class="field-label">📍 樓層</div>
@@ -406,26 +448,34 @@
       </div>
     </div>
 
-    <button class="btn-primary" id="submitBtn" disabled onclick="submitForm()">
+    <button class="submit-btn" id="submitBtn" disabled onclick="submitForm()">
       📤 送出報修單
     </button>
   </div>
 
-  <!-- Status Bar -->
+  <!-- Status -->
   <div class="status-bar">
     <div class="status-dot" id="statusDot"></div>
-    <span id="statusText">等待操作... 可直接點範例或錄音測試</span>
+    <span id="statusText">請先輸入 Gemini API Key，再錄音或選擇範例測試</span>
   </div>
 
 </div>
 
 <script>
+let apiKey = '';
 let recognition = null;
 let isRecording = false;
 
 function setStatus(type, msg) {
   document.getElementById('statusDot').className = 'status-dot ' + type;
   document.getElementById('statusText').textContent = msg;
+}
+
+function saveKey() {
+  const val = document.getElementById('apiKey').value.trim();
+  if (!val) { setStatus('error', '請輸入有效的 API Key'); return; }
+  apiKey = val;
+  setStatus('ok', '✅ API Key 已儲存，可以開始使用');
 }
 
 function useExample(text) {
@@ -485,6 +535,11 @@ function toggleRecording() {
 }
 
 async function analyze() {
+  if (!apiKey) {
+    setStatus('error', '❗ 請先輸入並儲存 Gemini API Key');
+    return;
+  }
+
   const transcript = document.getElementById('transcriptBox').value.trim();
   if (!transcript) {
     setStatus('error', '請先錄音、選擇範例，或手動輸入報修描述');
@@ -496,23 +551,12 @@ async function analyze() {
   btn.innerHTML = '<span class="loading-dot"></span><span class="loading-dot"></span><span class="loading-dot"></span>';
   setStatus('loading', 'AI 正在分析中...');
 
-  // Clear fields
   ['floor','area','category','description','urgency','contact'].forEach(f => {
     document.getElementById('field-' + f).classList.remove('filled');
     document.getElementById('val-' + f).textContent = '—';
   });
 
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 500,
-        system: '你是報修系統AI助手，只回傳純JSON，不加任何說明或markdown符號。',
-        messages: [{
-          role: 'user',
-          content: `從以下報修描述中抽取欄位，回傳純JSON：
+  const prompt = `你是報修系統AI助手。從以下報修描述中抽取欄位，只回傳純JSON，不加任何說明或markdown符號。
 
 描述：「${transcript}」
 
@@ -520,21 +564,41 @@ async function analyze() {
 {
   "floor": "樓層（如1F、2F、B1、大廳，不明確填不明）",
   "area": "具體區域（男廁、會議室、停車場等）",
-  "category": "維修類別（水電、空調、電梯、結構、清潔、其他）",
+  "category": "維修類別（水電、空調、電梯、結構、清潔、其他 其中一個）",
   "description": "問題簡述（15字以內）",
-  "urgency": "緊急程度（高、中、低）",
-  "contact": "建議聯絡（水電工程、空調技師、電梯維保、物業管理）"
-}`
-        }]
-      })
-    });
+  "urgency": "緊急程度（高、中、低 其中一個）",
+  "contact": "建議聯絡（水電工程、空調技師、電梯維保、物業管理 其中一個）"
+}`;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.1, maxOutputTokens: 500 }
+        })
+      }
+    );
 
     const data = await res.json();
-    let raw = data.content?.[0]?.text || '';
+
+    if (data.error) throw new Error(data.error.message);
+
+    let raw = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
     raw = raw.replace(/```json|```/g, '').trim();
     const result = JSON.parse(raw);
 
-    const fieldMap = { floor: result.floor, area: result.area, category: result.category, description: result.description, urgency: result.urgency, contact: result.contact };
+    const fieldMap = {
+      floor: result.floor,
+      area: result.area,
+      category: result.category,
+      description: result.description,
+      urgency: result.urgency,
+      contact: result.contact
+    };
 
     let delay = 0;
     for (const [key, value] of Object.entries(fieldMap)) {
@@ -542,7 +606,8 @@ async function analyze() {
         if (value && value !== '不明') {
           document.getElementById('field-' + key).classList.add('filled');
           if (key === 'urgency') {
-            document.getElementById('val-' + key).innerHTML = `<span class="urgency-badge urgency-${value}">${value}</span>`;
+            document.getElementById('val-' + key).innerHTML =
+              `<span class="urgency-badge urgency-${value}">${value}</span>`;
           } else {
             document.getElementById('val-' + key).textContent = value;
           }
